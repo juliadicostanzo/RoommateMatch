@@ -271,7 +271,9 @@ class RoommateMatch(App):
 			self.db_connection_error = True
 		self.query_one("#students-table", DataTable).cursor_type = "row"
 		self.query_one("#requests-table", DataTable).cursor_type = "row"
-		self.query_one("#admin-students-table", DataTable).cursor_type = "row"
+		admin_table = self.query_one("#admin-students-table", DataTable)
+		admin_table.add_columns("ID","Name","Email","Hometown","Group")
+		admin_table.cursor_type = "row"
 		self.query_one("#interests-table", DataTable).cursor_type = "row"
 		self.query_one("#preferences-table", DataTable).cursor_type = "row"
 		self.query_one("#admin-pairings-table", DataTable).cursor_type = "row"
@@ -471,8 +473,7 @@ class RoommateMatch(App):
 		welcome = self.query_one("#admin-manage-students-welcome", Label)
 		status = self.query_one("#admin-manage-students-status", Label)
 		welcome.update(f"Welcome, {self.current_admin_name or 'Admin'}")
-		table.clear(columns=True)
-		table.add_columns("ID", "Name", "Email", "Hometown", "Group")
+		table.clear()
 	
 		for student in self.current_admin.viewAllStudents():
 	
