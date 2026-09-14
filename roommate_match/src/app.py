@@ -365,7 +365,8 @@ class RoommateMatch(App):
 		elif event.data_table.id == "admin-students-table":
 			table = self.query_one("#admin-students-table", DataTable)
 			row = table.get_row_at(event.cursor_row)
-			self.selected_admin_student_id = int(row[0])
+			self.selected_admin_student_id = int(row[1])
+			self._admin_show_students()
 
 	def on_data_table_cell_selected(self, event: DataTable.CellSelected) -> None:
 		if event.data_table.id == "requests-table":
@@ -475,16 +476,23 @@ class RoommateMatch(App):
 		welcome = self.query_one("#admin-manage-students-welcome", Label)
 		status = self.query_one("#admin-manage-students-status", Label)
 		welcome.update(f"Welcome, {self.current_admin_name or 'Admin'}")
-		table.clear()
+		table.clear(columns=True)
+		table.add_column("Selected", width=10)
+		table.add_column("ID", width=12)
+		table.add_column("Name", width=24)
+		table.add_column("Email", width=30)
+		table.add_column("Hometown", width=20)
+		table.add_column("Group", width=10)
 	
 		for student in self.current_admin.viewAllStudents():
+
+			selected_text = ("Yes" if self.selected_admin_student_id == int(student.id) else "No")
 	
 			group = (str(student.groupID)
 				if student.groupID >= 0
 				else "None")
 	
-			table.add_row(str(student.id), str(student.name), str(student.email), str(student.hometown), group)
-		self.selected_admin_student_id = None
+			table.add_row(selected_text, str(student.id), str(student.name), str(student.email), str(student.hometown), group)
 	
 		if not self.system.students:
 			status.update("There are currently no students.")
