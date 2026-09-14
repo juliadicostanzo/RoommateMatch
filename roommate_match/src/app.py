@@ -10,6 +10,7 @@ from .databaseHelper import (
 	add_preference_to_student,
 	bootstrap_database_and_system,
 	create_roommate_request,
+	delete_student_from_database,
 	get_group_status_for_student,
 	get_incoming_roommate_requests,
 	get_outgoing_roommate_requests,
@@ -498,13 +499,24 @@ class RoommateMatch(App):
 		if self.selected_admin_student_id is None:
 			status.update("Select a student first.")
 			return
-		
-		student = self.system.getStudentById(self.selected_admin_student_id)
+
+		student_id = self.selected_admin_student_id
+
+		student = self.system.getStudentById(student_id)
 		if student is None:
 			status.update("Student not found.")
 			return
+		
 		student_name = student.name
-		self.current_admin.removeStudent(self.selected_admin_student_id)
+		success, message = self.current_admin.removeStudent(student_id)
+
+		if not success:
+			status.update(message)
+			return
+		
+		if self.db_connection is not None:
+			delete_student_from_database(self.db_connection, student_id)
+
 		self.selected_admin_student_id = None
 		status.update(f"Removed {student_name}.")
 		self._admin_show_students()

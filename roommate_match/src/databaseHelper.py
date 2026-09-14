@@ -282,6 +282,74 @@ def persist_students(connection: sqlite3.Connection, system: RoommateSystem) -> 
 	connection.commit()
 	return len(system.students)
 
+def delete_student_from_database(connection: sqlite3.Connection, student_id: int) -> None:
+    student_id = int(student_id)
+
+    # Remove roommate requests
+    if _table_exists(connection, "roommate_requests"):
+        connection.execute(
+            """
+            DELETE FROM roommate_requests
+            WHERE sender_id = ?
+               OR receiver_id = ?
+            """,
+            (student_id, student_id),
+        )
+    # Remove interests
+    if _table_exists(connection, "students_to_interest"):
+        connection.execute(
+            """
+            DELETE FROM students_to_interest
+            WHERE student_id = ?
+            """,
+            (student_id,),
+        )
+    if _table_exists(connection, "students_to_interests"):
+        connection.execute(
+            """
+            DELETE FROM students_to_interests
+            WHERE student_id = ?
+            """,
+            (student_id,),
+        )
+
+    # Remove preferences
+    if _table_exists(connection, "students_to_preference"):
+        connection.execute(
+            """
+            DELETE FROM students_to_preference
+            WHERE student_id = ?
+            """,
+            (student_id,),
+        )
+    if _table_exists(connection, "student_preferences"):
+        connection.execute(
+            """
+            DELETE FROM student_preferences
+            WHERE student_id = ?
+            """,
+            (student_id,),
+        )
+    # Old group relationship table, if present
+    if _table_exists(connection, "students_to_groups"):
+        connection.execute(
+            """
+            DELETE FROM students_to_groups
+            WHERE student_id = ?
+            """,
+            (student_id,),
+        )
+    # Remove the actual student
+    if _table_exists(connection, "students"):
+        connection.execute(
+            """
+            DELETE FROM students
+            WHERE id = ?
+            """,
+            (student_id,),
+        )
+
+    connection.commit()
 
 def persist_approved_groups(connection: sqlite3.Connection, system: RoommateSystem) -> int:
 	if not hasattr(system, "approved_groups"):
