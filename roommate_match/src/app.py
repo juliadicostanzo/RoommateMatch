@@ -450,6 +450,7 @@ class RoommateMatch(App):
 		admin_create_student_menu = self.query_one("#admin-create-student-menu", Container)
 		admin_finalize_pairing_menu = self.query_one("#admin-finalize-pairing-menu", Container)
 		admin_approved_groups_menu = self.query_one("#admin-view-approved-groups-menu", Container)
+		admin_manage_students_menu = self.query_one("#admin-manage-students-menu",Container)
 		welcome = self.query_one("#admin-menu-welcome", Label)
 		admin_status = self.query_one("#admin-menu-status", Label)
 
@@ -459,6 +460,7 @@ class RoommateMatch(App):
 		admin_create_student_menu.add_class("hidden")
 		admin_finalize_pairing_menu.add_class("hidden")
 		admin_approved_groups_menu.add_class("hidden")
+		admin_manage_students_menu.add_class("hidden")
 		student_menu.add_class("hidden")
 		login_panel.add_class("hidden")
 		admin_menu.remove_class("hidden")
