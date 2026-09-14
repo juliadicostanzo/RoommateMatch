@@ -81,6 +81,7 @@ class RoommateMatch(App):
 	selected_student_id: str | None = None
 	request_rows: list[dict[str, object]] = []
 	selected_request_id: int | None = None
+	selected_admin_student_id: int | None = None
 	request_table_mode: str | None = None
 	interest_rows: list[tuple[str, bool]] = []
 	selected_interest_title: str | None = None
@@ -211,6 +212,7 @@ class RoommateMatch(App):
 			yield Label("Admin Menu", id="title")
 			yield Label("", id="admin-menu-welcome")
 			yield Button("Create Student", id="admin-create-student-button", variant="primary")
+			yield Button("Manage Students", id="admin-manage-students-button", variant="primary")
 			yield Button("Finalize Pairing", id="admin-finalize-pairing-button", variant="primary")
 			yield Button("View Approved Groups", id="admin-view-approved-groups-button", variant="primary")
 			yield Button("Logout", id="admin-logout-button", variant="default")
@@ -231,6 +233,14 @@ class RoommateMatch(App):
 			yield Button("Submit Student", id="admin-create-student-submit-button", variant="primary")
 			yield Button("Cancel", id="admin-create-student-cancel-button", variant="default")
 			yield Label("", id="admin-create-student-status")
+
+		with Container(id="admin-manage-students-menu", classes="hidden"):
+			yield Label("Manage Students", id="title")
+			yield Label("", id="admin-manage-students-welcome")
+			yield DataTable(id="admin-students-table")
+			yield Button("Remove Selected Student", id="admin-remove-student-button", variant="error")
+			yield Button("Return", id="admin-manage-students-return-button", variant="default")
+			yield Label("", id="admin-manage-students-status")
 
 		with Container(id="admin-finalize-pairing-menu", classes="hidden"):
 			yield Label("Finalize Pairings", id="title")
@@ -260,6 +270,7 @@ class RoommateMatch(App):
 			self.db_connection_error = True
 		self.query_one("#students-table", DataTable).cursor_type = "row"
 		self.query_one("#requests-table", DataTable).cursor_type = "row"
+		self.query_one("#admin-students-table", DataTable).cursor_type = "row"
 		self.query_one("#interests-table", DataTable).cursor_type = "row"
 		self.query_one("#preferences-table", DataTable).cursor_type = "row"
 		self.query_one("#admin-pairings-table", DataTable).cursor_type = "row"
@@ -317,6 +328,12 @@ class RoommateMatch(App):
 			self.query_one("#admin-menu-status", Label).update("Create Student canceled.")
 		elif event.button.id == "admin-finalize-pairing-button":
 			self._admin_show_finalize_pairings_menu()
+		elif event.button.id == "admin-manage-students-button":
+			self._admin_show_students()
+		elif event.button.id == "admin-remove-student-button":
+			self._admin_remove_student()
+		elif event.button.id == "admin-manage-students-return-button":
+			self._show_admin_menu(self.current_admin_name or "Admin")
 		elif event.button.id == "admin-view-approved-groups-button":
 			self._admin_show_approved_groups_menu()
 		elif event.button.id == "admin-approve-all-button":
@@ -342,6 +359,10 @@ class RoommateMatch(App):
 			self._handle_interest_row_selection(event.cursor_row)
 		elif event.data_table.id == "preferences-table":
 			self._handle_preference_row_selection(event.cursor_row)
+		elif event.data_table.id == "admin-students-table":
+			table = self.query_one("#admin-students-table", DataTable)
+			row = table.get_row_at(event.cursor_row)
+			self.selected_admin_student_id = int(row[0])
 
 	def on_data_table_cell_selected(self, event: DataTable.CellSelected) -> None:
 		if event.data_table.id == "requests-table":
@@ -438,6 +459,55 @@ class RoommateMatch(App):
 		student_menu.add_class("hidden")
 		login_panel.add_class("hidden")
 		admin_menu.remove_class("hidden")
+
+	def _admin_show_students(self) -> None:
+		if self.current_admin is None or self.system is None:
+			return
+			
+		admin_menu = self.query_one("#admin-menu", Container)
+		student_menu = self.query_one("#admin-manage-students-menu", Container)
+		table = self.query_one("#admin-students-table", DataTable)
+		welcome = self.query_one("#admin-manage-students-welcome", Label)
+		status = self.query_one("#admin-manage-students-status", Label)
+		welcome.update(f"Welcome, {self.current_admin_name or 'Admin'}")
+		table.clear(columns=True)
+		table.add_columns("ID", "Name", "Email", "Hometown", "Group")
+	
+		for student in self.current_admin.viewAllStudents():
+	
+			group = (str(student.groupID)
+				if student.groupID >= 0
+				else "None")
+	
+			table.add_row(str(student.id), str(student.name), str(student.email), str(student.hometown), group)
+		self.selected_admin_student_id = None
+	
+		if not self.system.students:
+			status.update("There are currently no students.")
+		else:
+			status.update(f"{len(self.system.students)} students.")
+	
+		admin_menu.add_class("hidden")
+		student_menu.remove_class("hidden")
+
+	def _admin_remove_student(self) -> None:
+		status = self.query_one("#admin-manage-students-status", Label)
+		if self.current_admin is None or self.system is None:
+			status.update("No admin account is currently active.")
+			return
+		if self.selected_admin_student_id is None:
+			status.update("Select a student first.")
+			return
+		
+		student = self.system.getStudentById(self.selected_admin_student_id)
+		if student is None:
+			status.update("Student not found.")
+			return
+		student_name = student.name
+		self.current_admin.removeStudent(self.selected_admin_student_id)
+		self.selected_admin_student_id = None
+		status.update(f"Removed {student_name}.")
+		self._admin_show_students()
 
 	def _admin_show_finalize_pairings_menu(self) -> None:
 		if self.current_admin is None:

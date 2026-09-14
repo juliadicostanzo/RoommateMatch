@@ -31,11 +31,137 @@ class RoommateSystem:
         return student
 
     def removeStudent(self, id):
-        for student in self.students:
-            if student.id == id:
-                self.students.remove(student)
-                return f"Student: {student} was successfully removed"
-        return f"There is no student with id: {id}"
+        student = self.getStudentById(id)
+        if student is None:
+            return False, f"There is no student with id: {id}"
+        student_id = int(student.id)
+        student_group_id = int(student.groupID)
+
+        #Remove roommate request involving student
+        self.requests = [
+            request
+            for request in self.requests
+            if int(request.getSenderId()) != student_id
+            and student_id not in [
+            int(receiver_id)
+            for receiver_id in request.getReceiverIds()
+            ]
+        ]
+        # Remove request references stored on students
+        for other_student in self.students:
+            other_student.requestsSent = [
+                request
+                for request in other_student.requestsSent
+                if int(request.getSenderId()) != student_id
+                and student_id not in [
+                    int(receiver_id)
+                    for receiver_id in request.getReceiverIds()
+                ]
+            ]
+            other_student.requestsReceived = [
+                request
+                for request in other_student.requestsReceived
+                if int(request.getSenderId()) != student_id
+                and student_id not in [
+                    int(receiver_id)
+                    for receiver_id in request.getReceiverIds()
+                ]
+            ]
+
+            other_student.requests = [
+                request
+                for request in other_student.requests
+                if int(request.getSenderId()) != student_id
+                and student_id not in [
+                    int(receiver_id)
+                    for receiver_id in request.getReceiverIds()
+                ]
+            ]
+        # Remove pending pairings containing student
+        cleaned_pairings = []
+
+        for current_pairing in self.pairings:
+
+            if isinstance(current_pairing, dict):
+                member_ids = [int(member_id) 
+                for member_id in current_pairing.get("members", [])]
+            else:
+                member_ids = [int(member_id) 
+                for member_id in getattr(current_pairing,"students",[])]
+
+            if student_id not in member_ids:
+                cleaned_pairings.append(current_pairing)
+
+        self.pairings = cleaned_pairings
+
+        # Remove student from approved groups
+        cleaned_approved_groups = []
+
+        for approved_group in self.approved_groups:
+            if isinstance(approved_group, dict):
+                member_ids = [int(member_id) 
+                for member_id in approved_group.get("members",[])]
+
+            if student_id in member_ids:
+                member_ids.remove(student_id)
+
+            # Keep group only if it still has 2+ students
+            if len(member_ids) >= 2:
+                approved_group["members"] = member_ids
+                cleaned_approved_groups.append(approved_group)
+        else:
+            member_ids = [int(member_id)
+                for member_id in getattr(
+                    approved_group,
+                    "students",
+                    []
+                )
+            ]
+
+            if student_id in member_ids:
+                member_ids.remove(student_id)
+
+            if len(member_ids) >= 2:
+                approved_group.students = member_ids
+
+                if hasattr(approved_group, "group"):
+                    approved_group.group = member_ids
+
+                cleaned_approved_groups.append(approved_group)
+
+        self.approved_groups = cleaned_approved_groups
+
+        # Remove student
+        self.students.remove(student)
+
+        # If old group has fewer than 2 members
+        if student_group_id >= 0:
+
+            remaining_group_members = [
+                other_student
+                for other_student in self.students
+                if int(other_student.groupID) == student_group_id
+            ]
+
+            if len(remaining_group_members) < 2:
+
+                for remaining_student in remaining_group_members:
+                    remaining_student.groupID = -1
+
+                self.approved_groups = [
+                    group
+                    for group in self.approved_groups
+                    if (
+                        int(
+                            group.get("group_id", -1)
+                            if isinstance(group, dict)
+                            else getattr(group, "group_id", -1)
+                        )
+                        != student_group_id
+                    )
+                ]
+        return True, f"{student.name} was successfully removed."
+        
 
     def getStudentByName(self, name):
         studentList = []

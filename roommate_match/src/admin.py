@@ -13,7 +13,7 @@ class Admin:
         self.system.addStudent(name, email, password, hometown)
 
     def removeStudent(self, id):
-        self.system.students.remove(self.system.getStudentById(id))
+        return self.system.removeStudent(id)
 
     def viewAllStudents(self):
         return self.system.students
