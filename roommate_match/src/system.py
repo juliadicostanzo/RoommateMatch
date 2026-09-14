@@ -99,35 +99,28 @@ class RoommateSystem:
 
         for approved_group in self.approved_groups:
             if isinstance(approved_group, dict):
-                member_ids = [int(member_id) 
-                for member_id in approved_group.get("members",[])]
+                member_ids = [int(member_id) for member_id in approved_group.get("members",[])]
 
-            if student_id in member_ids:
-                member_ids.remove(student_id)
+                if student_id in member_ids:
+                    member_ids.remove(student_id)
 
-            # Keep group only if it still has 2+ students
-            if len(member_ids) >= 2:
-                approved_group["members"] = member_ids
-                cleaned_approved_groups.append(approved_group)
-        else:
-            member_ids = [int(member_id)
-                for member_id in getattr(
-                    approved_group,
-                    "students",
-                    []
-                )
-            ]
+                # Keep group only if it still has 2+ students
+                if len(member_ids) >= 2:
+                    approved_group["members"] = member_ids
+                    cleaned_approved_groups.append(approved_group)
+            else:
+                member_ids = [int(member_id) for member_id in getattr(approved_group, "students", [])]
 
-            if student_id in member_ids:
-                member_ids.remove(student_id)
+                if student_id in member_ids:
+                    member_ids.remove(student_id)
 
-            if len(member_ids) >= 2:
-                approved_group.students = member_ids
+                if len(member_ids) >= 2:
+                    approved_group.students = member_ids
 
-                if hasattr(approved_group, "group"):
-                    approved_group.group = member_ids
+                    if hasattr(approved_group, "group"):
+                        approved_group.group = member_ids
 
-                cleaned_approved_groups.append(approved_group)
+                    cleaned_approved_groups.append(approved_group)
 
         self.approved_groups = cleaned_approved_groups
 
