@@ -1,11 +1,71 @@
-## Roommate Match Description 
-Roommate Match is student housing management portal that helps students find compatible roomates and form roommate groups of two to four students. When a student logs in they can choose to view other students, send requests, view the status of sent requests, or update their prefences or interests. Once a student accepts another student's request the admin must approve the pairing before the pairing becomes finizalized. Once students are assigned to a group they cannot send requests to other students. The admin can approve or deny pairings, and create new students. 
+# Roommate Match
+Roommate Match is a terminal-based roommate matching application built with Python, Textual, and SQLite. Students can browse potential roommates, send roommate requests, manage preferences and interests, and form approved roommate groups. 
 
-[![Review Assignment Due Date](https://classroom.github.com/assets/deadline-readme-button-22041afd0340ce965d47ae6ef1cefeee28c7c493a6346c4f15d667ab976d596c.svg)](https://classroom.github.com/a/2HAsn8j_)
-[![Open in Codespaces](https://classroom.github.com/assets/launch-codespace-2972f46106e565e64193e422d61a12cf1da4916b45550586e14ef0a7c637dd04.svg)](https://classroom.github.com/open-in-codespaces?assignment_repo_id=23409764)
+The application was originally developed as a four-person team project for a Software Engineering course at Ithaca College. After the course project was completed, I continued developing the application independently to improve its administrative functionality and data management.
 
-Client Pitch: https://docs.google.com/document/d/1DDQLSBJ6T8TasFYi-sCNYtr0rpkmOyzu6-dGCkTyK6w/edit?usp=sharing
+## Features
+- Student and administrator login
+- Browse and compare potential roommates
+- Send and respond to roommate requests
+- Track pending and approved roommate groups
+- Manage student interests and preferences
+- Admin creation of student accounts
+- Admin approval and rejection of roommate pairings
+- Admin view of all students
+- Admin removal of students
+- Cleanup of related requests, pairings, groups, interests, and preferences when a student is deleted
+- SQLite data persistence
 
-Sprint Backlog: https://docs.google.com/document/d/1Ja-57dA5BZ617KdQ6HQ01w6K-lKyyLGOxOXHXSWbuKI/edit?usp=sharing
+## Technologies
+- Python
+- Textual
+- SQLite
+- SQL
+- uv
+- Git / GitHub
+- unittest
 
-Scrum Master documentation: https://docs.google.com/document/d/1CzXzZboKK6pSPUpFnAa0vyw8HYxbTzC7BWcaUR7b8rQ/edit?usp=sharing
+## Running the Project
+### 1. Clone the repository
+
+```bash
+git clone https://github.com/juliadicostanzo/RoommateMatch.git
+cd RoommateMatch
+```
+
+### 2. Install dependencies
+
+```bash
+uv sync
+```
+
+### 3. Run the application
+
+```bash
+uv run python main.py
+```
+
+## My Extension
+I independently extended the original project by implementing a Manage Students feature for administrators.
+
+The extension allows an administrator to:
+
+- View all students in the system
+- Select a student for removal
+- Delete a student from the system
+- Persist the deletion to the SQLite database:
+- Remove related roommate requests
+- Remove pending pairings
+- Update approved roommate groups
+- Remove student interests and preferences
+- Remove Database relationship records
+
+This cleanup prevents deleted students from leaving invalid references elsewhere in the application and helps maintain consistent application and database state.
+
+## Original Project
+
+This repository is based on a four-person Software Engineering course project.
+
+Original repository:
+
+https://github.com/VenkatCSClasses/project-2-roommate-match
