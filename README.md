@@ -64,9 +64,9 @@ The extension allows an administrator to:
 This cleanup prevents deleted students from leaving invalid references elsewhere in the application and helps maintain consistent application and database state.
 
 ## Future Improvements
-Allow students to leave or request to leave a group
-Add students to a group if there is less than 4 students in the group
-Reject or approve one pairing at a time 
+- Allow students to leave or request to leave a group
+- Add students to a group if there is less than 4 students in the group
+- Reject or approve one pairing at a time 
 
 ## Original Project
 
