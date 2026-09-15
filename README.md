@@ -34,7 +34,8 @@ cd RoommateMatch
 ```
 
 ### 2. Install dependencies
-
+Install uv using the official installer:
+[uv Installation Instructions](https://docs.astral.sh/uv/getting-started/installation/)
 ```bash
 uv sync
 ```
