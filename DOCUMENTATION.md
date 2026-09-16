@@ -42,10 +42,25 @@ This project uses **uv** to manage Python dependencies.
   - A temporary password will be assigned to that student
   - The student can change this password when they log in
 
+- **Manage Students**
+   - View all students currently in the system
+   - Select a student from the table
+   - The Selected column changes from No to Yes for the currently selected student
+   - Remove the selected student from the system
+   - When a student is removed, related data is also cleaned up, including:
+      - Roommate requests involving that student
+      - Pending pairings
+      - Approved roommate groups
+      - Student interest relationships
+      - Student preference relationships
+      - Related database records
+   - The deletion is persisted to the SQLite database
+
 - **Finalize Pairing**
   - Pairings will show up here when all members of a request have accepted it
   - Admin can reject or approve all pairings
-  - Once approved, a group ID is assigned and the group can be found under the view all groups button
+  - Once approved, a group ID is assigned
+  - Approved groups can be found under the view all groups button
 
 ### Student Menu
 
@@ -62,7 +77,8 @@ This project uses **uv** to manage Python dependencies.
   - If one person in the request group rejects the request, the request is void and a new request must be made
 
 - **View Request Status**
-  - View all members of the group and see their status (pending/accepted)
+  - View all members of the group
+  - See each member's current status, such as pending or accepted
 
 - **View Group Status**
   - A request becomes a group when all members of the request have accepted
@@ -70,7 +86,8 @@ This project uses **uv** to manage Python dependencies.
   - Approved groups will show an "Approved" status
 
 - **Respond to Requests**
-  - See pending requests and accept or reject them
+  - View pending roommate requests
+  - Accept or reject a request
 
 - **Change Interests**
   - Click to toggle each of the interests
@@ -79,7 +96,8 @@ This project uses **uv** to manage Python dependencies.
   - Click to toggle each of the preferences
 
 - **Change Password**
-  - Provide old password to change to a new password
+  - Provide the current password
+  - Enter a new password
 
 ## Testing
 
@@ -134,6 +152,32 @@ Creates three students. One student sends requests to the other two students. On
 ##### test_get_group_id
 ##### test_get_students
 
+## Independent Extension
+
+After the original team project was completed, I continued development independently.
+
+My extension added the Manage Students administrator workflow, including:
+
+- Viewing all students
+- Selecting a student for removal
+- Clear Yes / No selection feedback
+- Removing a student from the system
+- Persisting deletion to SQLite
+- Cleaning related roommate requests
+- Cleaning pending pairings
+- Updating approved groups
+- Removing interest and preference relationships
+- Removing related database records
+
+This cleanup helps maintain consistent application and database state when a student is deleted.
+
+## Original Project
+
+This repository is based on a four-person Software Engineering course project.
+
+Original repository:
+
+https://github.com/VenkatCSClasses/project-2-roommate-match
 
 
 
