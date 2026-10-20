@@ -2,6 +2,16 @@
 Roommate Match is a terminal-based roommate matching application built with Python, Textual, and SQLite. Students can browse potential roommates, send roommate requests, manage preferences and interests, and form approved roommate groups. 
 
 The application was originally developed as a four-person team project for a Software Engineering course at Ithaca College. After the course project was completed, I continued developing the application independently to improve its administrative functionality and data management.
+## Screenshots
+
+### Login Screen
+![Login Screen](screenshots/login.png)
+
+### Student Menu
+![Student Menu](screenshots/student-menu.png)
+
+### Roommate Requests
+![Roommate Requests](screenshots/roommate-requests.png)
 
 ## Features
 - Student and administrator login
