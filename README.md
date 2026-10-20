@@ -11,7 +11,7 @@ The application was originally developed as a four-person team project for a Sof
 ![Student Menu](screenshots/student-menu.png)
 
 ### Roommate Requests
-![Roommate Requests](screenshots/roommate-requests.png)
+![Roommate Requests](screenshots/roommate-request.png)
 
 ## Features
 - Student and administrator login
